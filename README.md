@@ -16,7 +16,7 @@
 >
 > *Recommended ORM Frameworks:* Hibernate (for Java), SQLAlchemy (for Python), Sequelize (for Node.js).
 
-## USERS & USER ACCOUNTS
+## USER & USER ACCOUNT
 
 > *Data Source:* The application will bootstrap account data from a well-known CSV location: `/opt/user.csv`.
 >
@@ -26,7 +26,7 @@
 >
 > *Fields `account_created` and `account_updated`:* Users cannot set or modify these fields. Any input values for these fields will be ignored. Both fields should have the same value (as no updates/deletions are allowed).
 
-## AUTHENTICATION REQUIREMENTS
+## AUTHENTICATION REQUIREMENT
 
 > *Authentication Method:* The web application should only support Token-Based authentication. Session Authentication is not supported. Every API call to authenticated endpoints requires a basic authentication token.
 
