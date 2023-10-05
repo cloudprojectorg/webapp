@@ -1,4 +1,4 @@
-name: Node.js Ashutosh_WorkFlow
+name: Node.js Anuja_WorkFlow
 
  
 
@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    name: Ashutosh_WorkFlow
+    name: Anuja_WorkFlow
     runs-on: ubuntu-latest
 
  
