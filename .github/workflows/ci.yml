@@ -4,7 +4,7 @@ name: Node.js Anuja_WorkFlow
 
 on:
 
-   push:
+   pull_request:
     branches:
       - main
 
