@@ -38,7 +38,7 @@ jobs:
 
 
     
-        echo "DB_NAME=TestDataBase1" >> .env
+        echo "DB_NAME=projectDatabase" >> .env
         echo "PORT=8080" >> .env
         cat .env
 
@@ -48,7 +48,7 @@ jobs:
         sudo apt-get install -y curl
         sudo systemctl start mysql
         sudo systemctl status mysql
-        mysql -u ${{ secrets.DB_USER }} -p"${{ secrets.DB_PASSWORD }}" -e "CREATE DATABASE TestDataBase1;"
+        mysql -u ${{ secrets.DB_USER }} -p"${{ secrets.DB_PASSWORD }}" -e "CREATE DATABASE projectDatabase;"
 
     - name: Run Tests
       run : npm test
