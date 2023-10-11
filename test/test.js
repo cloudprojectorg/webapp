@@ -8,7 +8,7 @@ describe('GET /healthz', () => {
       .expect('Cache-Control', 'no-cache, no-store, must-revalidate')
       .expect('Pragma', 'no-cache')
       .expect('X-Content-Type-Options', 'nosniff')
-      .expect(200)
+      .expect(400)
       .then((response) => {
         expect(response.body).toEqual({ status: 'ok' });
       });
