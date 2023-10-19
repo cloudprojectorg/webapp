@@ -21,6 +21,10 @@ jobs:
           unzip packer_1.7.8_linux_amd64.zip
           sudo mv packer /usr/local/bin/
 
+      - name: Initialize Packer
+        run: |
+          packer init packer.pkr.hcl    
+
       - name: Build AMI with Packer
         env:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
