@@ -1,7 +1,7 @@
 // Imports
 const express = require('express');
-const { User, Assignment } = require('./models');
-const bcrypt = require('bcrypt');
+//const { User, Assignment } = require('./models');
+//const bcrypt = require('bcrypt');
 const assignmentController = require('./controller/assignmentController');
 const healthzController = require('./health/healthzController');
 const authController = require('./auth/auth');
@@ -16,7 +16,6 @@ const PORT = 8080;
 
 // Middleware to parse incoming JSON bodies
 app.use(express.json());
-
 
 app.use((req, res, next) => {
     if (req.method === 'POST' || req.method === 'PUT') {
