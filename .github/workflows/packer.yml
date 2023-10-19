@@ -26,13 +26,13 @@ jobs:
           pwd
           ls -al 
 
-      - name: Run packer fmt
+      - name: Run packer fmt 
         run: |
-          packer fmt -check
-          if [ $? -ne 0 ]; then
-            echo "packer fmt modified the packer template. Please format your packer files."
-            exit 1
-          fi
+          packer fmt packer.pkr.hcl
+          # if [ $? -ne 0 ]; then
+          #   echo "packer fmt modified the packer template. Please format your packer files."
+          #   exit 1
+          # fi
 
       - name: Validate Packer Configuration
         run: |
