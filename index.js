@@ -1,6 +1,6 @@
 // Imports
 const express = require('express');
-const { User, Assignment } = require('../Models');
+// const { User, Assignment } = require('../Models');
 //const bcrypt = require('bcrypt');
 const assignmentController = require('./Controller/assignmentController');
 const healthzController = require('./health/healthzController');
