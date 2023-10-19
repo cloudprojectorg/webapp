@@ -149,6 +149,7 @@ coverage.cov
 coverage/
 venv/
 .envrc
+.env
 
 # Ignore user-provided go.work files.
 /go.work
