@@ -34,6 +34,10 @@ jobs:
           #   exit 1
           # fi
 
+      - name: Initialize Packer
+        run: |
+          packer init packer.pkr.hcl
+
       - name: Validate Packer Configuration
         run: |
           packer validate packer.pkr.hcl
