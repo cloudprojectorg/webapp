@@ -3,7 +3,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const Sequelize = require('sequelize');
 const { app, startServer, getServer } = require('../index');
-const testConfig = require('../config/test-config');
+//const testConfig = require('../config/test-config');
 chai.use(chaiHttp);
 const { expect } = chai;
 const log = require('why-is-node-running');

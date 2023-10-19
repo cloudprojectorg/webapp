@@ -37,6 +37,8 @@ jobs:
           while ! nc -z localhost 3306; do
             sleep 1
           done
+      - name: List project directory structure
+        run: find . -print
       - name: Test MySQL Connection
         run: |
           mysql --host=127.0.0.1 --port=3306 --user=root --password=root1234 -e "SHOW DATABASES;"
