@@ -47,7 +47,7 @@ jobs:
     needs: check-packer-format
     runs-on: ubuntu-latest
     # This ensures the AMI is built only when the PR is merged
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'pull' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
