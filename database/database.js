@@ -13,8 +13,8 @@ const sequelize = new Sequelize({
 });
 
 //Import Models
-const UserModel = require('../models/user')(sequelize);
-const AssignmentModel = require('../models/assignment')(sequelize);
+const UserModel = require('../Models/user')(sequelize);
+const AssignmentModel = require('../Models/assignment')(sequelize);
 
 const createDatabase = async () => {
   try {

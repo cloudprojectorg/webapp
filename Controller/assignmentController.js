@@ -1,4 +1,4 @@
-const { Assignment } = require('../models');
+const { Assignment } = require('../Models');
 
 const validateAssignmentData = (data) => {
     const { name, points, num_of_attempts, deadline } = data;

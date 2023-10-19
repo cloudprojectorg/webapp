@@ -1,6 +1,6 @@
 const fs = require('fs');
 const csv = require('csv-parser');
-const { User } = require('../models');
+const { User } = require('../Models');
 const bcrypt = require('bcrypt');
 
 const csvLoader = (filePath) => {
