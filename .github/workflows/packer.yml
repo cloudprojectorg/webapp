@@ -4,7 +4,7 @@ name: Packer Continuous Integration
 on:
   pull_request:
     paths:
-      - '**.pkr.hcl' # Trigger only if packer files are modified
+      - 'packer.pkr.hcl' # Trigger only if packer files are modified
 
 jobs:
   check-packer-format:

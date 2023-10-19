@@ -76,7 +76,7 @@ variable "vpc_id" {
 
 
 # Packer configuration
-source "amazon-ebs" "my-ami" {
+source "amazon-ebs" "debian" {
   region          =  var.aws_region
   ami_name        = "my-custom-ami-{{timestamp}}"
   ami_description = "Custom AMI description here"
@@ -103,16 +103,44 @@ source "amazon-ebs" "my-ami" {
     volume_size           = 25
     volume_type           = "gp2"
   }
+
+  tags = {
+    Name = "packer-ami-webapp"
+  }
 }
-
-
-
 
 
 # Build configuration
 build {
-  sources = ["source.amazon-ebs.my-ami"]
+  sources = ["source.amazon-ebs.debian"]
+
   # Provisioners and other build settings...
+  provisioner "shell" {
+    inline = [
+      "sudo mkdir -p /tmp/webapp && sudo chown admin:admin /tmp/webapp"
+    ]
+  }
+
+  provisioner "shell" {
+    inline = [
+      "ls -ld /tmp/webapp",
+      "id"
+    ]
+  }
+
+  provisioner "file" {
+    source      = "./"
+    destination = "/tmp/webapp"
+    direction   = "upload"
+  }
+
+  provisioner "shell" {
+    inline = [
+      "sudo mkdir -p /opt/webapp",
+      "sudo mv /tmp/webapp/* /opt/webapp/",
+      "sudo chown -R nobody:nogroup /opt/webapp"
+    ]
+  }
 
   # Packer provisioners
   provisioner "shell" {
@@ -126,5 +154,10 @@ build {
   provisioner "shell" {
     # type   = "shell"
     script = "./script.sh"
+  }
+
+  post-processor "manifest" {
+    output     = "manifest.json"
+    strip_path = true
   }
 }
