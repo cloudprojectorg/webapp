@@ -150,7 +150,6 @@ coverage/
 venv/
 .envrc
 
-
 # Ignore user-provided go.work files.
 /go.work
 /go.work.sum
