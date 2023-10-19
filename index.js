@@ -2,7 +2,7 @@
 const express = require('express');
 //const { User, Assignment } = require('./models');
 //const bcrypt = require('bcrypt');
-const assignmentController = require('./controller/assignmentController');
+const assignmentController = require('./Controller/assignmentController');
 const healthzController = require('./health/healthzController');
 const authController = require('./auth/auth');
 const { sequelize, initializeDatabase } = require('./database/database');
