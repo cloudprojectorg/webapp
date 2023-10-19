@@ -16,15 +16,15 @@ variable "aws_region" {
 }
 
 variable "access_key" {
-  type      = string
-#   sensitive = true
-  default   = ""
+  type = string
+  #   sensitive = true
+  default = ""
 }
 
 variable "secret_key" {
-  type      = string
-#   sensitive = true
-  default   = ""
+  type = string
+  #   sensitive = true
+  default = ""
 }
 
 variable "ssh_username" {
@@ -34,16 +34,16 @@ variable "ssh_username" {
 
 variable "source_ami_filter" {
   type = object({
-    virtualization-type   = string
-    name                 = string
-    root-device-type      = string
-    architecture          = string
+    virtualization-type = string
+    name                = string
+    root-device-type    = string
+    architecture        = string
   })
   default = {
-    virtualization-type  = "hvm"
+    virtualization-type = "hvm"
     name                = "debian-12-*"
-    root-device-type     = "ebs"
-    architecture         = "x86_64"
+    root-device-type    = "ebs"
+    architecture        = "x86_64"
   }
 }
 
@@ -63,7 +63,7 @@ variable "ami_users" {
 }
 
 variable "tags" {
-  type    = map(string)
+  type = map(string)
   default = {
     "Name" = "my-custom-ami"
   }
@@ -77,18 +77,18 @@ variable "vpc_id" {
 
 # Packer configuration
 source "amazon-ebs" "debian" {
-  region          =  var.aws_region
+  region          = var.aws_region
   ami_name        = "my-custom-ami-{{timestamp}}"
   ami_description = "Custom AMI description here"
   instance_type   = "t2.micro"
-#   region          =  "us-east-1"
-  ami_users       =  var.ami_users
-  ssh_agent_auth  = false
-#   region          = var.aws_region
+  #   region          =  "us-east-1"
+  ami_users      = var.ami_users
+  ssh_agent_auth = false
+  #   region          = var.aws_region
   source_ami_filter {
     filters = {
       "virtualization-type" = "hvm"
-      "name"               = "debian-12-*"
+      "name"                = "debian-12-*"
       "root-device-type"    = "ebs"
       "architecture"        = "x86_64"
     }
@@ -146,9 +146,9 @@ build {
   provisioner "shell" {
     # type        = "shell"
     inline = [
-        "export DEBIAN_FRONTEND=noninteractive",
-        "sudo apt-get update",
-        "sudo apt-get install -y mariadb-server mariadb-client"
+      "export DEBIAN_FRONTEND=noninteractive",
+      "sudo apt-get update",
+      "sudo apt-get install -y mariadb-server mariadb-client"
     ]
   }
   provisioner "shell" {

@@ -21,6 +21,11 @@ jobs:
           unzip packer_1.7.8_linux_amd64.zip
           sudo mv packer /usr/local/bin/
 
+      - name: Debug Current Directory
+        run: |
+          pwd
+          ls -al 
+
       - name: Run packer fmt
         run: |
           packer fmt -check
