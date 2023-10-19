@@ -1,0 +1,46 @@
+{
+  "builders": [
+      {
+          "type": "amazon-ebs",
+          "region": "us-west-1",
+          "source_ami_filter": {
+              "filters": {
+                  "virtualization-type": "hvm",
+                  "name": "debian-12-*",
+                  "root-device-type": "ebs",
+                  "architecture": "x86_64",
+                  "block-device-mapping.volume-type": "gp2"
+              },
+              "owners": [
+                  "amazon"
+              ],
+              "most_recent": true
+          },
+          "instance_type": "t2.micro",
+          "ssh_username": "admin",
+          "ami_name": "my-custom-ami-{{timestamp}}",
+          "ami_description": "Custom AMI description here",
+          "ami_users": [
+              "119898521865"
+          ],
+          "tags": {
+              "Name": "my-custom-ami"
+          },
+          "vpc_id": "vpc-0d1d57c2bab66beb2"
+      }
+  ],
+  "provisioners": [
+      {
+          "type": "shell",
+          "inline": [
+              "export DEBIAN_FRONTEND=noninteractive",  
+              "sudo apt-get update",
+              "sudo apt-get install -y mariadb-server mariadb-client"
+          ]
+      },
+      {
+          "type": "shell",
+          "script": "./script.sh"
+      }
+  ]
+}

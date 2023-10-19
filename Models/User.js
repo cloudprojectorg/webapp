@@ -1,58 +1,63 @@
-const { Sequelize, DataTypes, Model } = require('sequelize');
-// const sequelize = new Sequelize('sqlite::memory:');
-//const sequelize = require('./db');
-const bcrypt = require('bcrypt')
-const sequelize = require('./db');
+'use strict';
+const {
+  Model, DataTypes
+} = require('sequelize');
 
-const User1 = sequelize.define('User', {
+module.exports = (sequelize) => {
+  class User extends Model {
+    static associate(models) {
+      this.hasMany(models.Assignment, { foreignKey: 'userId', as: 'assignments' });
+    }
+  }
+
+  User.init({
     id: {
-        type: DataTypes.UUID,
-        primaryKey: true,
-        defaultValue: DataTypes.UUIDV4,
-        allowNull: false
-      },
-      first_name: {
-        type: DataTypes.STRING,
-        allowNull: false
-      },
-      last_name: {
-        type: DataTypes.STRING,
-        allowNull: false
-      },
-      email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
-      },
-      password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        set(value) {
-          const hashedPassword = bcrypt.hashSync(value, 10); // hashing the password
-          // console.log(hashedPassword)
-          this.setDataValue('password', hashedPassword);
-        }
-      },
-      account_created: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW
-      },
-      account_updated: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+      allowNull: false
+    },
+    first_name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    last_name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true
       }
-
-}, {
-  timestamps: false,
+    },
+    account_created: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW
+    },
+    account_updated: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW
+    }
+  }, {
+    sequelize,
+    modelName: 'User',
+    tableName: 'Users',
+    timestamps: false,
+    hooks: {
+      beforeSave: (user, options) => {
+        user.account_updated = new Date();
+      }
+    }
   });
 
-  
-  User1.associate = (models) => {
-    User1.hasMany(models.Assignment, { foreignKey: 'userId', as: 'assignments' });
-  };
-
-  console.log(User1 === sequelize.models.User);
-
-  module.exports = User1
-
+  return User;
+};
