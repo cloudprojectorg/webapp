@@ -20,6 +20,7 @@ console.log('Database Configuration:', {
   dialect: dbConfig[env].dialect,
   host: dbConfig[env].host,
   database: dbConfig[env].database,
+  // username: dbConfig[env].username,
   username: dbConfig[env].username,
   password: dbConfig[env].password
 });
@@ -49,6 +50,20 @@ const createDatabase = async () => {
     console.error(`Failed to ensure database: ${err}`);
   }
 };
+
+// const initializeModels = async () => {
+//   try {
+//     const UserModel = require('../Models/user')(sequelize);
+//     const AssignmentModel = require('../Models/assignment')(sequelize);
+//        await sequelize.sync({ alter: true })
+//        csvLoader('opt/users.csv')
+//       // await sequelize.sync({ alter: true }).then(()=>csvLoader1('opt/users.csv')); 
+//       console.log('Models synchronized with database.');
+//   } catch (err) {
+//       console.error(`Failed to synchronize models: ${err}`);
+//   }
+// };
+
 
 const initializeModels = async () => {
 
