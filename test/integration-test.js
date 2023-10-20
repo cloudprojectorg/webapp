@@ -8,7 +8,7 @@ chai.use(chaiHttp);
 const { expect } = chai;
 const log = require('why-is-node-running');
 
-const sequelize = new Sequelize('projectdatabase_test', 'testuser', 'root1234', {
+const sequelize = new Sequelize('projectdb_test', 'testuser', 'root1234', {
   host: 'localhost',
   dialect: 'mysql'
 });
