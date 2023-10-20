@@ -14,7 +14,7 @@ jobs:
         image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: root1234
-          MYSQL_DATABASE: projectdatabase_test
+          MYSQL_DATABASE: projectdb_test
           MYSQL_USER: testuser
           MYSQL_PASSWORD: root1234
         ports:
@@ -54,7 +54,7 @@ jobs:
           DB_HOST: "localhost"
           DB_USERNAME: "testuser"
           DB_PASSWORD: "root1234"
-          DB_DATABASE: "projectdatabase_test"
+          DB_DATABASE: "projectdb_test"
 
       - name: List project directory structure
         run: find . -print
@@ -66,4 +66,4 @@ jobs:
           DB_HOST: "localhost"
           DB_USERNAME: "testuser"
           DB_PASSWORD: "root1234"
-          DB_DATABASE: "projectdatabase_test"
+          DB_DATABASE: "projectdb_test"
