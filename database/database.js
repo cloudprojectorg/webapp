@@ -8,7 +8,8 @@ const csvLoader = require('../utils/csvUtils');
 
 const sequelize = new Sequelize({
   dialect: dbConfig[env].dialect,
-  host: '127.0.0.1',
+  host: dbConfig[env].host,
+  // host: '127.0.0.1',
   database: dbConfig[env].database,
   // username: dbConfig[env].username,
   username: dbConfig[env].username,
