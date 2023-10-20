@@ -54,19 +54,49 @@ app.patch('/v1/assignments/:id', (req, res) => {
     res.status(405).send({ error: "PATCH method not allowed." });
 });
 
+// //Start Server Method
+// const startServer = async () => {
+//     try {
+//         await initializeDatabase();
+//         console.log('Database synchronized.');
+//         await csvLoader('opt/users.csv');
+
+//         // await sequelize.sync({ alter: true }).then(()=>csvLoader('opt/users.csv')); 
+//         console.log("Finished processing CSV");
+//         server = app.listen(PORT, () => {
+//             console.log(`Server started running on http://localhost:${PORT}`);
+//         });
+//     } catch (err) {
+//         console.error('Error:', err);
+//     }
+// };
+
 //Start Server Method
+
 const startServer = async () => {
+
     try {
+
         await initializeDatabase();
+
         console.log('Database synchronized.');
+
         await csvLoader('opt/users.csv');
+
         console.log("Finished processing CSV");
+
         server = app.listen(PORT, () => {
+
             console.log(`Server started running on http://localhost:${PORT}`);
+
         });
+
     } catch (err) {
+
         console.error('Error:', err);
+
     }
+
 };
 
 if (process.env.NODE_ENV !== 'test') {
