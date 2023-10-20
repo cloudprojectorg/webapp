@@ -2,7 +2,7 @@
 name: Build Packer AMI
 
 on:
-  push:
+  pull_request:
     paths:
       - 'packer.pkr.hcl' # Trigger only if packer files are modified
 
