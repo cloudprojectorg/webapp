@@ -1,16 +1,18 @@
 const { Sequelize } = require('sequelize');
 const env = process.env.NODE_ENV || 'development';
 const dbConfig = require('../config/config');
-console.log(`Connected to ${dbConfig[env].database} database in ${env} mode.`);
+
 
 
 const sequelize = new Sequelize({
   dialect: dbConfig[env].dialect,
-  host: dbConfig[env].host,
+  host: '127.0.0.1',
   database: dbConfig[env].database,
   username: dbConfig[env].username,
   password: dbConfig[env].password
 });
+
+
 
 //Import Models
 //const UserModel = require('../Models/user')(sequelize);
@@ -20,7 +22,7 @@ const createDatabase = async () => {
   try {
       const sequelizeTemp = new Sequelize({
           dialect: dbConfig[env].dialect,
-          host: dbConfig[env].host,
+          host: '127.0.0.1',
           username: dbConfig[env].username,
           password: dbConfig[env].password
       });

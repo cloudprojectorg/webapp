@@ -64,7 +64,7 @@ User=nobody
 WantedBy=multi-user.target" | sudo tee /etc/systemd/system/webapp.service
 
 # Enable the webapp service
-sudo systemctl enable webapp.service
+# sudo systemctl enable webapp.service
 
 # Restart MariaDB for changes to take effect
 sudo systemctl restart mysql
