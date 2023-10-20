@@ -51,20 +51,6 @@ const createDatabase = async () => {
   }
 };
 
-// const initializeModels = async () => {
-//   try {
-//     const UserModel = require('../Models/user')(sequelize);
-//     const AssignmentModel = require('../Models/assignment')(sequelize);
-//        await sequelize.sync({ alter: true })
-//        csvLoader('opt/users.csv')
-//       // await sequelize.sync({ alter: true }).then(()=>csvLoader1('opt/users.csv')); 
-//       console.log('Models synchronized with database.');
-//   } catch (err) {
-//       console.error(`Failed to synchronize models: ${err}`);
-//   }
-// };
-
-
 const initializeModels = async () => {
 
   try {
