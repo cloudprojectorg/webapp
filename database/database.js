@@ -25,8 +25,10 @@ const createDatabase = async () => {
   try {
     const sequelizeTemp = new Sequelize({
       dialect: dbConfig[env].dialect,
-      host: '127.0.0.1',
-      username: 'projectdb',
+      host: dbConfig[env].host,
+      // host: '127.0.0.1',
+      // username: 'projectdb',
+      username: dbConfig[env].username,
       password: dbConfig[env].password
     });
 
