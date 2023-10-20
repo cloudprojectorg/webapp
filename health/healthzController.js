@@ -45,13 +45,13 @@ exports.checkDatabase = (req, res) => {
         'Cache-Control': 'no-cache, no-store, must-revalidate;',
         'Pragma': 'no-cache',
         'X-Content-Type-Options': 'nosniff'
-      }).json({ message: 'Database Connection Status : Successful' });
+      }).end();
     })
     .catch(() => {
       res.status(503).set({
         'Cache-Control': 'no-cache, no-store, must-revalidate;',
         'Pragma': 'no-cache',
         'X-Content-Type-Options': 'nosniff'
-      }).json({ error: 'Database Connection Status : Unsuccessful' });
+      }).end();
     });
 };
