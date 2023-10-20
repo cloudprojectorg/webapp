@@ -3,6 +3,8 @@ name: Packer Continuous Integration
 
 on:
   pull_request:
+    branches:
+      - main
     paths:
       - 'packer.pkr.hcl' # Trigger only if packer files are modified
 
