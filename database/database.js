@@ -16,6 +16,13 @@ const sequelize = new Sequelize({
   password: dbConfig[env].password
 });
 
+console.log('Database Configuration:', {
+  dialect: dbConfig[env].dialect,
+  host: dbConfig[env].host,
+  database: dbConfig[env].database,
+  username: dbConfig[env].username,
+  password: dbConfig[env].password
+});
 
 
 //Import Models

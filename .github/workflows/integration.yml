@@ -56,6 +56,11 @@ jobs:
           DB_PASSWORD: "root1234"
           DB_DATABASE: "projectdb_test"
 
+      - name: Test testuser Connection
+        run: |
+          mysql --host=mysql --port=3306 --user=testuser --password=root1234 -e "SHOW DATABASES;"
+    
+
       - name: List project directory structure
         run: find . -print
         
