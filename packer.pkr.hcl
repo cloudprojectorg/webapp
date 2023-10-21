@@ -10,7 +10,7 @@ packer {
 
 
 # Define variables
-variable "aws_region"   {
+variable "aws_region" {
   type    = string
   default = "us-east-1"
 }
@@ -95,7 +95,7 @@ source "amazon-ebs" "debian" {
     owners      = ["amazon"]
     most_recent = true
   }
-  ssh_username = var.ssh_username
+  ssh_username = var.ssh_usernam
 
   launch_block_device_mappings {
     delete_on_termination = true
