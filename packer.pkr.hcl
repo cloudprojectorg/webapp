@@ -95,7 +95,7 @@ source "amazon-ebs" "debian" {
     owners      = ["amazon"]
     most_recent = true
   }
-  ssh_username = var.ssh_usernam
+  ssh_username = var.ssh_username
 
   launch_block_device_mappings {
     delete_on_termination = true
