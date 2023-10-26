@@ -10,7 +10,7 @@ packer {
 
 
 # Define variables
-variable "aws_region" { 
+variable "aws_region" {
   type    = string
   default = "us-east-1"
 }
@@ -82,7 +82,7 @@ source "amazon-ebs" "debian" {
   ami_description = "Custom AMI description here"
   instance_type   = "t2.micro"
   #   region          =  "us-east-1"
-  ami_users      = var.ami_users
+  ami_users = var.ami_users
   # access_key = var.access_key != "" ? var.access_key : null
   # secret_key=  var.secret_key != "" ? var.secret_key: null
   ssh_agent_auth = false
