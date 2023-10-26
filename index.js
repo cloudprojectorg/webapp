@@ -1,4 +1,5 @@
 // Imports
+require('dotenv').config({ path: '/etc/webapp.env' });
 const express = require('express');
 // const { User, Assignment } = require('../Models');
 //const bcrypt = require('bcrypt');
@@ -74,29 +75,21 @@ app.patch('/v1/assignments/:id', (req, res) => {
 //Start Server Method
 
 const startServer = async () => {
-
+    console.log(process.env.DB_HOST);
+    console.log(process.env.DB_USERNAME);
+    console.log(process.env.DB_PASSWORD);
+    console.log(process.env.DB_NAME);
     try {
-
         await initializeDatabase();
-
         console.log('Database synchronized.');
-
         await csvLoader('opt/users.csv');
-
         console.log("Finished processing CSV");
-
         server = app.listen(PORT, () => {
-
             console.log(`Server started running on http://localhost:${PORT}`);
-
         });
-
     } catch (err) {
-
         console.error('Error:', err);
-
     }
-
 };
 
 if (process.env.NODE_ENV !== 'test') {
