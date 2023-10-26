@@ -16,7 +16,7 @@ variable "aws_region" {
 }
 
 variable "access_key" {
-  type = string
+type = string
   #   sensitive = true
   default = ""
 }
