@@ -28,11 +28,11 @@ jobs:
 
       - name: Run packer fmt 
         run: |
-          packer fmt packer.pkr.hcl
-          if [ $? -ne 0 ]; then
-            echo "packer fmt modified the packer template. Please format your packer files."
-            exit 1
+          if ! packer fmt -check packer.pkr.hcl; then
+          echo "Packer format incorrect. Please run 'packer fmt' and commit the changes."
+          exit 1
           fi
+        shell: /usr/bin/bash -e {0}
 
       - name: Initialize Packer
         run: |
