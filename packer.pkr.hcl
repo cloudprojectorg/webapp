@@ -83,6 +83,8 @@ source "amazon-ebs" "debian" {
   instance_type   = "t2.micro"
   #   region          =  "us-east-1"
   ami_users      = var.ami_users
+  # access_key = var.access_key != "" ? var.access_key : null
+  # secret_key=  var.secret_key != "" ? var.secret_key: null
   ssh_agent_auth = false
   #   region          = var.aws_region
   source_ami_filter {

@@ -17,7 +17,106 @@
       "artifact_id": "us-east-1:ami-02f77c561b61f30e1",
       "packer_run_uuid": "38b8ee85-46da-9748-41ac-96cd121b2f3c",
       "custom_data": null
+    },
+    {
+      "name": "debian",
+      "builder_type": "amazon-ebs",
+      "build_time": 1698095797,
+      "files": null,
+      "artifact_id": "us-east-1:ami-0e8d65919f31f7188",
+      "packer_run_uuid": "1264d4e2-5251-0d54-623e-bd9011d57469",
+      "custom_data": null
+    },
+    {
+      "name": "debian",
+      "builder_type": "amazon-ebs",
+      "build_time": 1698101092,
+      "files": null,
+      "artifact_id": "us-east-1:ami-0d4c8635c24e6d7c5",
+      "packer_run_uuid": "9a6f1aa6-c4f5-7a3e-b7d1-ac63e2e123f7",
+      "custom_data": null
+    },
+    {
+      "name": "debian",
+      "builder_type": "amazon-ebs",
+      "build_time": 1698112353,
+      "files": null,
+      "artifact_id": "us-east-1:ami-09ca0938a83127ed5",
+      "packer_run_uuid": "b67cba97-f970-b61d-620c-43518545af27",
+      "custom_data": null
+    },
+    {
+      "name": "debian",
+      "builder_type": "amazon-ebs",
+      "build_time": 1698184223,
+      "files": null,
+      "artifact_id": "us-east-1:ami-094d39896ee0b7088",
+      "packer_run_uuid": "147271b1-98e4-3a35-fea6-e633b8a21594",
+      "custom_data": null
+    },
+    {
+      "name": "debian",
+      "builder_type": "amazon-ebs",
+      "build_time": 1698247670,
+      "files": null,
+      "artifact_id": "us-east-1:ami-009787f8850e6eb5f",
+      "packer_run_uuid": "bbf07b13-1f33-d5e8-13c2-7a519e6c8662",
+      "custom_data": null
+    },
+    {
+      "name": "debian",
+      "builder_type": "amazon-ebs",
+      "build_time": 1698249536,
+      "files": null,
+      "artifact_id": "us-east-1:ami-08c0e88d3659f68eb",
+      "packer_run_uuid": "ae038e6c-9c38-c2a8-9fbd-0f5878ba10f5",
+      "custom_data": null
+    },
+    {
+      "name": "debian",
+      "builder_type": "amazon-ebs",
+      "build_time": 1698251397,
+      "files": null,
+      "artifact_id": "us-east-1:ami-0c385d17f03678ec3",
+      "packer_run_uuid": "838c38ab-1efa-f0f0-c9b1-2d67d6c49e98",
+      "custom_data": null
+    },
+    {
+      "name": "debian",
+      "builder_type": "amazon-ebs",
+      "build_time": 1698265880,
+      "files": null,
+      "artifact_id": "us-east-1:ami-063c9536c8e374023",
+      "packer_run_uuid": "2ed44993-e38d-7595-b334-73299f660e1d",
+      "custom_data": null
+    },
+    {
+      "name": "debian",
+      "builder_type": "amazon-ebs",
+      "build_time": 1698266566,
+      "files": null,
+      "artifact_id": "us-east-1:ami-054d742c013aac58e",
+      "packer_run_uuid": "63247c28-07b9-6dc7-6053-3807fadeee89",
+      "custom_data": null
+    },
+    {
+      "name": "debian",
+      "builder_type": "amazon-ebs",
+      "build_time": 1698268289,
+      "files": null,
+      "artifact_id": "us-east-1:ami-0e2a2d1e19633239d",
+      "packer_run_uuid": "9e4b615f-20c5-5c8c-fc0a-31a1f9b95bd7",
+      "custom_data": null
+    },
+    {
+      "name": "debian",
+      "builder_type": "amazon-ebs",
+      "build_time": 1698278845,
+      "files": null,
+      "artifact_id": "us-east-1:ami-01f8203165fc4b35b",
+      "packer_run_uuid": "a68aea6b-7388-9ab4-d594-405a443b371d",
+      "custom_data": null
     }
   ],
-  "last_run_uuid": "38b8ee85-46da-9748-41ac-96cd121b2f3c"
+  "last_run_uuid": "a68aea6b-7388-9ab4-d594-405a443b371d"
 }

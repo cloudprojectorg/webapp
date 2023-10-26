@@ -1,9 +1,11 @@
+// required files
+require('dotenv').config({ path: '/etc/webapp.env' });
 module.exports = {
     development: {
-      username: 'root',
-      password: 'root1234',
-      database: 'projectdb',
-      host: 'localhost',
+      username: process.env.DB_USERNAME|| 'root',
+      password: process.env.DB_PASSWORD|| 'root1234',
+      database: process.env.DB_NAME||'csye6225',
+      host: process.env.DB_HOST|| 'localhost',
       dialect: 'mysql'
     },
     test: {
@@ -14,3 +16,4 @@ module.exports = {
       dialect: 'mysql'
     }
   };
+  
