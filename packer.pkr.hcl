@@ -164,7 +164,7 @@ build {
       "sudo chown -R nobody:nogroup /opt/webapp"
     ]
   }
-  
+
   provisioner "shell" {
     # type   = "shell"
     script = "./script.sh"
