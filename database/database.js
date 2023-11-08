@@ -1,17 +1,22 @@
 //required files
-require('dotenv').config({ path: '/etc/webapp.env' });
+require('dotenv').config({ path: '/etc/webapp.env', override: true });
+const fs = require('fs');
+const path = require('path');
+const applicationLog = require('../log/logger');
 const { Sequelize } = require('sequelize');
 const env = process.env.NODE_ENV || 'development';
-//required files
 const dbConfig = require('../config/config');
 const csvLoader = require('../utils/csvUtils');
 
 //console.log(`Before Sequelize`);
 //console.log(process.env.DB_HOST, process.env.DB_USER, process.env.DB_PASSWORD);
-console.log(`Trying to connect to host outside sequelize: ${dbConfig[env].host}`);
-console.log(`Database Name ${dbConfig[env].username}`);
-console.log(`Database Password ${dbConfig[env].database}`);
-console.log(`Database User Name ${dbConfig[env].password}`);
+// console.log(`Trying to connect to host outside sequelize: ${dbConfig[env].host}`);
+// console.log(`Database Name ${dbConfig[env].username}`);
+// console.log(`Database Password ${dbConfig[env].database}`);
+// console.log(`Database User Name ${dbConfig[env].password}`);
+
+applicationLog(`Connected to ${dbConfig[env].database} database in ${env} environment`);
+
 const sequelize = new Sequelize({
   dialect: dbConfig[env].dialect,
   host: dbConfig[env].host,
@@ -19,15 +24,16 @@ const sequelize = new Sequelize({
   username: dbConfig[env].username,
   password: dbConfig[env].password
 });
-console.log(`Trying to connect to host after sequelize: ${dbConfig[env].host}`);
 
 //authenticate connection with RDS
 sequelize.authenticate()
   .then(() => {
-    console.log('Connection to RDS has been established successfully.');
+    //console.log('Connection to RDS has been established successfully.');
+    applicationLog('Connection to RDS has been established successfully.');
   })
   .catch(error => {
-    console.error('Unable to connect to the RDS:', error);
+    //console.error('Unable to connect to the RDS:', error);
+    applicationLog(`Unable to connect to the RDS: ${error.message}`);
   });
 
 // console.log('Database Configuration:', {
@@ -50,14 +56,9 @@ const createDatabase = async () => {
       dialect: dbConfig[env].dialect,
       host: dbConfig[env].host,
       username: dbConfig[env].username,
-      password: dbConfig[env].password
+      password: dbConfig[env].password,
+      logging: (msg) => applicationLog(msg)
     });
-
-    //log database details
-    console.log(`Trying to connect to host inside sequelize: ${dbConfig[env].host}`);
-    console.log(`Database Name ${dbConfig[env].username}`);
-    console.log(`Database Password ${dbConfig[env].database}`);
-    console.log(`Database User Name ${dbConfig[env].password}`);
 
     //logs to check the database name it is fetching from the env
     //console.log(`Database name "${dbConfig[env].database}"`);
@@ -65,14 +66,13 @@ const createDatabase = async () => {
     const query = `CREATE DATABASE IF NOT EXISTS ${dbConfig[env].database};`;
     await sequelizeTemp.query(query);
     //Ensure database
-    console.log(`Database "${dbConfig[env].database}" ensured.`);
+    applicationLog(`Database "${dbConfig[env].database}" ensured.`);
     await sequelizeTemp.close();
   } catch (err) {
     //failed to ensure database
-    console.error(`Failed to ensure database: ${err}`);
+    applicationLog(`Failed to ensure database: ${err.message}`);
   }
 };
-
 
 //initialize models for the database
 const initializeModels = async () => {
@@ -80,10 +80,10 @@ const initializeModels = async () => {
     //sync
     await sequelize.sync({ alter: true });
     //models synced with the database
-    console.log('Models synchronized with database.');
+    applicationLog('Models synchronized with database.');
   } catch (err) {
     //failed to sync models
-    console.error(`Failed to synchronize models: ${err}`);
+    applicationLog(`Failed to synchronize models: ${err.message}`);
   }
 };
 
