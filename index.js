@@ -158,7 +158,7 @@ if (process.env.NODE_ENV !== 'test') {
 
 process.on('exit', () => {
     logStreamAccess.close();
-    logStreamApplication.close();
+    //logStreamApplication.close();
 });
 
 module.exports = {
