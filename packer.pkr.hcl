@@ -116,6 +116,27 @@ source "amazon-ebs" "debian" {
 build {
   sources = ["source.amazon-ebs.debian"]
 
+  provisioner "shell" {
+    inline = [
+      "echo 'Installing CloudWatch Agent...'",
+      "curl https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb -o amazon-cloudwatch-agent.deb",
+      "sudo dpkg -i -E ./amazon-cloudwatch-agent.deb"
+    ]
+  }
+
+  provisioner "file" {
+    source      = "./cloudwatch-agent-config.json"
+    destination = "/tmp/cloudwatch-agent-config.json"
+  }
+
+  provisioner "shell" {
+    inline = [
+      "echo 'Copying cloudwatch agent config file to the correct location'",
+      "sudo cp /tmp/cloudwatch-agent-config.json /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json",
+      "sudo systemctl enable amazon-cloudwatch-agent"
+    ]
+  }
+
   # Provisioners and other build settings...
   provisioner "shell" {
     inline = [
@@ -143,16 +164,7 @@ build {
       "sudo chown -R nobody:nogroup /opt/webapp"
     ]
   }
-
-  # Packer provisioners
-  provisioner "shell" {
-    # type        = "shell"
-    inline = [
-      "export DEBIAN_FRONTEND=noninteractive",
-      "sudo apt-get update",
-      "sudo apt-get install -y mariadb-server mariadb-client"
-    ]
-  }
+  
   provisioner "shell" {
     # type   = "shell"
     script = "./script.sh"

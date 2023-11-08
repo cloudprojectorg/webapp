@@ -14,25 +14,43 @@ else
     sudo useradd -r -m -d /opt/webapp webappuser
 fi
 
+# Create cwagent users if they don't already exist
+id -u cwagent &>/dev/null || sudo useradd -r -M -s /sbin/nologin cwagent
+
 sudo mkdir -p /home/webappuser
 sudo chown webappuser:webappuser /home/webappuser
 sudo chmod 755 /home/webappuser
 
-# Ensure /opt/webapp directory exists
+# Create a group for log access and add both appUser and cwagent to it
+sudo groupadd -f grouplog
+sudo usermod -a -G grouplog webappuser
+sudo usermod -a -G grouplog cwagent
+
+# Ensure /opt/webapp directory exists and set permissions
 sudo mkdir -p /opt/webapp
-# Adjust permissions for the webapp directory
-# sudo chown -R $(whoami):$(whoami) /opt/webapp
 sudo chown -R webappuser:webappuser /opt/webapp
 sudo chmod -R 755 /opt/webapp
 
 # Ensure log and environment files exist with correct permissions
-sudo touch /var/log/userdata.log
-sudo chown webappuser:webappuser /var/log/userdata.log
-sudo chmod 664 /var/log/userdata.log
+sudo mkdir -p /var/log/webapp
+sudo chown -R webappuser:grouplog /var/log/webapp
+sudo chmod -R 775 /var/log/webapp
+
+# Ensure /opt/webapp directory exists
+# sudo mkdir -p /opt/webapp
+# # Adjust permissions for the webapp directory
+# # sudo chown -R $(whoami):$(whoami) /opt/webapp
+# sudo chown -R webappuser:webappuser /opt/webapp
+# sudo chmod -R 755 /opt/webapp
+
+# # Ensure log and environment files exist with correct permissions
+# sudo touch /var/log/userdata.log
+# sudo chown webappuser:webappuser /var/log/userdata.log
+# sudo chmod 664 /var/log/userdata.log
 
 sudo touch /etc/webapp.env
 sudo chown webappuser:webappuser /etc/webapp.env
-sudo chmod 640 /etc/webapp.env
+sudo chmod 644 /etc/webapp.env
 
 # # Touch webapp.ev
 # sudo touch /etc/webapp.env
@@ -41,40 +59,45 @@ sudo chmod 640 /etc/webapp.env
 # fi
 # sudo chmod -R o+rx /opt/webapp
 
-
-# Ensure /var/log/userdata.log exists and has correct permissions
-# sudo touch /var/log/userdata.log
-# sudo chown webappuser:webappuser /var/log/userdata.log
-# sudo chmod 664 /var/log/userdata.log
-
-
-if [ -f /etc/webapp.env ]; then
-    # shellcheck disable=SC1091
-    sudo chmod 644 /etc/webapp.env
-    source /etc/webapp.env
-    export DB_HOST DB_USERNAME DB_PASSWORD DB_NAME
-    # echo "DB_HOST=$DB_HOST" >> /var/log/userdata.log
-    # echo "DB_USERNAME=$DB_USERNAME" >> /var/log/userdata.log
-    # sudo bash -c "echo 'DB_HOST=$DB_HOST' >> /var/log/userdata.log"
-    # sudo bash -c "echo 'DB_USERNAME=$DB_USERNAME' >> /var/log/userdata.log"
-    echo "DB_HOST=$DB_HOST" | sudo tee -a /var/log/userdata.log
-    echo "DB_USERNAME=$DB_USERNAME" | sudo tee -a /var/log/userdata.log
-else
-    echo "Environment file /etc/webapp.env does not exist!" >> /var/log/userdata.log
-fi
-
-# Install AWS SDK
-# npm install aws-sdk
-
 # Sequelize and mysql are npm packages, you should be able to cd into your app directory and install them using npm
 cd /opt/webapp || exit
 
 # Run npm commands as webappuser
-sudo -u webappuser npm uninstall bcrypt
-sudo -u webappuser npm install bcrypt
-sudo -u webappuser npm install sequelize mysql
-sudo -u webappuser npm install dotenv
-sudo -u webappuser npm install
+# Install other npm dependencies
+sudo -u webappuser npm uninstall bcrypt --prefix /opt/webapp
+sudo -u webappuser npm install bcrypt --prefix /opt/webapp
+sudo -u webappuser npm install sequelize mysql2 --prefix /opt/webapp
+sudo -u webappuser npm install dotenv --prefix /opt/webapp
+sudo -u webappuser npm install --prefix /opt/webapp
+
+# Ensure log and environment files exist with correct permissions
+sudo mkdir -p /var/log/webapp
+sudo chown -R webappuser:grouplog /var/log/webapp
+sudo chmod -R 775 /var/log/webapp
+sudo touch /var/log/webapp/access.log
+sudo touch /var/log/webapp/application.log
+
+# Ensure log and environment files exist with correct permissions
+sudo touch /var/log/userdata.log
+sudo chown webappuser:webappuser /var/log/userdata.log
+sudo chmod 775 /var/log/userdata.log
+
+# Create the log files after npm installations
+sudo touch /var/log/webapp/access.log
+sudo touch /var/log/webapp/application.log
+sudo chown webappuser:grouplog /var/log/webapp/access.log
+sudo chown webappuser:grouplog /var/log/webapp/application.log
+sudo chmod 775 /var/log/webapp/access.log
+sudo chmod 775 /var/log/webapp/application.log
+
+# Create environment file and set correct permissions
+sudo touch /etc/webapp.env
+sudo chown webappuser:webappuser /etc/webapp.env
+sudo chmod 644 /etc/webapp.env
+
+# List the permissions and ownership of the log files
+echo "Listing Permissions of Log Files before script"
+ls -l /var/log/webapp
 
 # Remove current bcrypt module, and then reinstall
 # npm uninstall bcrypt
@@ -125,6 +148,7 @@ After=/lib/systemd/system/cloud-final.service /lib/systemd/system/network.target
 Wants=/lib/systemd/system/cloud-final.service
 
 [Service]
+ExecStartPre=/bin/sleep 20
 EnvironmentFile=/etc/webapp.env
 ExecStart=/usr/bin/node /opt/webapp/index.js
 WorkingDirectory=/opt/webapp
@@ -133,6 +157,7 @@ StandardError=journal
 Restart=always
 RestartSec=30s
 User=webappuser
+Group=grouplog
 
 [Install]
 WantedBy=multi-user.target
@@ -145,13 +170,24 @@ EOL"
 #     echo "DB Password: ${db_password}";
 # } >> /var/log/userdata.log'
 
+# List the permissions and ownership of the log files
+echo "Listing Permissions of Log Files after script"
+ls -l /var/log/webapp
+
 # Enable and start the service (optional as the user data might handle this)
-# sudo systemctl start webapp.service
-# sudo systemctl status webapp.service
-# sudo systemctl enable webapp.service
 sudo systemctl daemon-reload
+sudo systemctl enable webapp.service
 sudo systemctl start webapp.service
 
+# Clean up any unnecessary packages
+sudo apt-get autoremove -y
+sudo apt-get autoclean -y
+sudo apt-get clean -y
+sudo apt purge -y git
+sudo apt clean
+
+echo "Setup completed successfully."
+# End of script
 
 # sudo tee /etc/systemd/system/webapp.service
 # Modify the 50-server.cnf to change bind-address
@@ -166,9 +202,9 @@ sudo systemctl start webapp.service
 # EOF
 
 # Check if git is installed and uninstall if it is
-if which git > /dev/null; then
-    echo "Git is installed. Uninstalling..."
-    sudo apt purge -y git
-else
-    echo "Git is not installed."
-fi
+# if which git > /dev/null; then
+#     echo "Git is installed. Uninstalling..."
+#     sudo apt purge -y git
+# else
+#     echo "Git is not installed."
+# fi
