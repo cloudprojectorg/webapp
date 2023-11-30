@@ -3,6 +3,9 @@
 require('dotenv').config({ path: '/etc/webapp.env' });
 const { Assignment } = require('../Models');
 const applicationLog = require('../log/logger');
+const db = require('../Models/index');
+const { Submission } = require('../Models');
+const { publishToSns } = require('../sns');
 
 
 //validate assignment data
@@ -182,40 +185,36 @@ const updateAssignment = (req, res) => {
 
 //Delete Assignment
 const deleteAssignment = (req, res) => {
-    //Check if assignment present or not
-    Assignment.findOne({ where: { id: req.params.id } })
-        .then(assignment => {
-            if (!assignment) {
-                //404 if assignment not found
-                return res.status(404).json({ error: 'Assignment not found' });
+    const assignmentId = req.params.id;
+
+    Submission.count({ where: { AssignmentId: assignmentId } })
+        .then(count => {
+            if (count > 0) {
+                // If there is at least one submission, do not allow deletion
+                return res.status(400).json({ error: 'Deletion not possible: there exists at least one submission for this assignment.' });
             }
-            //if delete with body
-            if (Object.keys(req.body).length !== 0) {
-                return res.status(400).json({ error: 'Bad request: DELETE request should not include body.' });
-            }
-            //user does not have permission to delete the assignment
-            if (String(assignment.userId).trim() !== String(req.user.dataValues.id).trim()) {
-                //status code 401
-                return res.status(401).json({ error: 'You do not have permission to delete this assignment.' });
-            }
-            //delete assignment
-            assignment.destroy()
+            // Proceed with deletion if no submissions are found
+            Assignment.findOne({ where: { id: assignmentId } })
+                .then(assignment => {
+                    if (!assignment) {
+                        return res.status(404).json({ error: 'Assignment not found' });
+                    }
+                    if (String(assignment.userId).trim() !== String(req.user.dataValues.id).trim()) {
+                        return res.status(401).json({ error: 'You do not have permission to delete this assignment.' });
+                    }
+                    return assignment.destroy();
+                })
                 .then(() => {
-                    //status code 204 for deletion
                     res.status(204).send();
                 })
                 .catch(err => {
-                    //console.error(err);
-                    // failed to delete assignment
-                    applicationLog(`Failed to delete assignment with ID ${req.params.id} - Error: ${err.message}`);
+                    applicationLog(`Failed to delete assignment with ID ${assignmentId} - Error: ${err.message}`);
                     res.status(500).json({ error: 'Failed to delete assignment.' });
                 });
         })
         .catch(err => {
-            //console.error(err);
-            //failed to find assignment
-            applicationLog(`Failed to find assignment with ID ${req.params.id} - Error: ${err.message}`);
-            res.status(500).json({ error: 'Failed to find assignment.' });
+            applicationLog(`Failed to check submissions for assignment with ID ${assignmentId} - Error: ${err.message}`);
+            res.status(500).json({ error: 'Failed to check submissions.' });
         });
 };
 
@@ -253,6 +252,95 @@ const getAssignmentDetails = (req, res) => {
         });
 };
 
+//Assignment submission
+const submitAssignment = async (req, res) => {
+    try {
+        const assignmentId = req.params.id;
+        const assignment = await Assignment.findByPk(assignmentId);
+
+        //if assignment not found
+        if (!assignment) {
+            return res.status(404).json({ error: 'Assignment not found.' });
+        }
+
+        const currentTime = new Date();
+        const deadline = new Date(assignment.deadline);
+        const isBeforeDeadline = currentTime <= deadline;
+
+        const submissionCount = await Submission.count({
+            where: {
+                AssignmentId: assignmentId,
+                UserId: req.user.id
+            }
+        });
+
+        const withinAttemptLimit = submissionCount < assignment.num_of_attempts;
+
+        let errorMessage = null;
+        let submission = null;
+
+        // Set error message if needed and do not create submission
+        if (!isBeforeDeadline) {
+            errorMessage = 'Submission deadline has passed.';
+        } else if (!withinAttemptLimit) {
+            errorMessage = 'Retry limit exceeded.';
+        } else {
+            // Create submission if no errors
+            submission = await Submission.create({
+                submission_url: req.body.submission_url,
+                AssignmentId: assignmentId,
+                UserId: req.user.id
+            });
+        }
+
+        const snsMessage = {
+            UserEmail: req.user.email,
+            SubmissionURL: req.body.submission_url,
+            SubmissionId: submission ? submission.id : null,
+            AssignmentId: assignmentId,
+            UserId: req.user.id,
+            errorMessage: errorMessage
+        };
+
+        try {
+            // Always publish to SNS topic regardless of success or failure
+            applicationLog(snsMessage);
+            const response = await publishToSns(snsMessage);
+            console.log(`Message sent to the topic: ${response.MessageId}`);
+        } catch (error) {
+            console.error('Error sending message to SNS topic:', error);
+            return res.status(500).send({
+                success: false,
+                message: 'Error sending submission notification.'
+            });
+        }
+
+        // Respond based on whether an error occurred
+        if (errorMessage) {
+            return res.status(400).json({ error: errorMessage });
+        } else {
+            // Return success response
+            const jsonResponse = {
+                id: submission.id,
+                assignment_id: assignmentId,
+                submission_url: req.body.submission_url,
+                submission_date: new Date().toISOString(),
+                submission_updated: new Date().toISOString()
+            };
+            return res.status(201).json(jsonResponse);
+        }
+    } catch (err) {
+        console.error('Detailed Error:', {
+            message: err.message,
+            stack: err.stack,
+            ...err
+        });
+        res.status(500).json({
+            error: 'Internal server error during submission.',
+            details: err.message
+        });
+    }
+};
 
 //export all the modules getAllAssignments,createAssignment, updateAssignment, deleteAssignment, getAssignmentDetails
 module.exports = {
@@ -260,5 +348,6 @@ module.exports = {
     createAssignment,
     updateAssignment,
     deleteAssignment,
-    getAssignmentDetails
+    getAssignmentDetails,
+    submitAssignment
 };
