@@ -1,6 +1,7 @@
 //required files
 require('dotenv').config({ path: '/etc/webapp.env' });
 'use strict';
+const { Submission } = require('../Models');
 const {
   Model, DataTypes
 } = require('sequelize');
@@ -10,6 +11,7 @@ module.exports = (sequelize) => {
   class Assignment extends Model {
     static associate(models) {
       this.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
+      Assignment.hasMany(models.Submission, { foreignKey: 'AssignmentId', as: 'submissions' });
     }
   }
 

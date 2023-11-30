@@ -48,6 +48,7 @@ sequelize.authenticate()
 //Import Models
 const UserModel = require('../Models/User.js')(sequelize);
 const AssignmentModel = require('../Models/Assignment.js')(sequelize);
+const SubmissionModel = require('../Models/submission.js')(sequelize, Sequelize.DataTypes);
 
 //create database
 const createDatabase = async () => {

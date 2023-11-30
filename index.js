@@ -106,6 +106,9 @@ app.patch('/v1/assignments/:id', (req, res) => {
     res.status(405).send({ error: "PATCH method not allowed." });
 });
 
+//Assignment submission
+app.post('/v1/assignments/:id/submissions', authController.authenticateUser, assignmentController.submitAssignment);
+
 // //Start Server Method
 // const startServer = async () => {
 //     try {

@@ -12,6 +12,7 @@ module.exports = (sequelize) => {
     static associate(models) {
       //one user with multiple assignments
       this.hasMany(models.Assignment, { foreignKey: 'userId', as: 'assignments' });
+      this.hasMany(models.Submission, { foreignKey: 'UserId', as: 'submissions' });
     }
   }
 
