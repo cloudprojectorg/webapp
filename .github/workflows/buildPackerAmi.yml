@@ -32,3 +32,55 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           packer build packer.pkr.hcl
+
+      # Fetching generated AMI ID from above Packer Build
+      - name: Fetching generated AMI ID
+        id: fetch_ami_id
+        run: |
+          AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
+          echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
+
+      # Configuring AWS CLI with Credentials
+      - name: Configuring AWS CLI with Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEMO }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}
+          aws-region: ${{ secrets.AWS_REGION_DEMO }}
+
+      #List Launch templates
+      - name: List Launch Templates for Debugging
+        run: |
+          echo ${{ secrets.AWS_REGION }}
+          aws ec2 describe-launch-templates
+
+      # Add this step for debugging purposes
+      - name: Log AWS Configuration
+        run: |
+          aws configure list
+          aws ec2 describe-launch-templates --query 'LaunchTemplates[?LaunchTemplateName==`web-app-launch-template`].LaunchTemplateName'
+      
+
+      # Creating a new Launch Template version with the latest AMI ID
+      - name: Create new Launch Template version
+        run: |
+          aws ec2 create-launch-template-version --launch-template-name "web-app-launch-template" --source-version 1 --launch-template-data "ImageId=${{ env.AMI_ID }}"
+
+      # Performing an Instance Refresh to reflect the changes with new AMI
+      - name: Start Instance Refresh
+        run: aws autoscaling start-instance-refresh --auto-scaling-group-name "auto-scaling-group"
+
+      # Waiting for instance refresh to complete
+      - name: Wait for Instance Refresh
+        run: |
+          while true; do
+            status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name "auto-scaling-group" --query 'InstanceRefreshes[0].Status' --output text)
+            echo "Refresh status: $status"
+            if [[ $status == "Successful" || $status == "Failed" ]]; then
+              break
+            fi
+            sleep 30
+          done
+          if [[ $status == "Failed" ]]; then
+            exit 1
+          fi
