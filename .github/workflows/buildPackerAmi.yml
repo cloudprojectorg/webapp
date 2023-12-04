@@ -58,23 +58,23 @@ jobs:
       - name: Log AWS Configuration
         run: |
           aws configure list
-          aws ec2 describe-launch-templates --query 'LaunchTemplates[?LaunchTemplateName==`web-app-launch-template`].LaunchTemplateName'
+          aws ec2 describe-launch-templates --query 'LaunchTemplates[?LaunchTemplateName==`${{ secrets.AWS_LAUNCH_TEMPLATE }}`].LaunchTemplateName'
       
 
       # Creating a new Launch Template version with the latest AMI ID
       - name: Create new Launch Template version
         run: |
-          aws ec2 create-launch-template-version --launch-template-name "web-app-launch-template" --source-version 1 --launch-template-data "ImageId=${{ env.AMI_ID }}"
+          aws ec2 create-launch-template-version --launch-template-name "${{ secrets.AWS_LAUNCH_TEMPLATE }}" --source-version 1 --launch-template-data "ImageId=${{ env.AMI_ID }}"
 
       # Performing an Instance Refresh to reflect the changes with new AMI
       - name: Start Instance Refresh
-        run: aws autoscaling start-instance-refresh --auto-scaling-group-name "auto-scaling-group"
+        run: aws autoscaling start-instance-refresh --auto-scaling-group-name "${{ secrets.AWS_AUTO_SCALING_GROUP }}"
 
       # Waiting for instance refresh to complete
       - name: Wait for Instance Refresh
         run: |
           while true; do
-            status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name "auto-scaling-group" --query 'InstanceRefreshes[0].Status' --output text)
+            status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name "${{ secrets.AWS_AUTO_SCALING_GROUP }}" --query 'InstanceRefreshes[0].Status' --output text)
             echo "Refresh status: $status"
             if [[ $status == "Successful" || $status == "Failed" ]]; then
               break
